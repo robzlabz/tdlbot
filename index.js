@@ -1,7 +1,5 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
-import fs from 'fs';
-import fetch from 'node-fetch';
 import TelegramBot from 'node-telegram-bot-api';
 
 dotenv.config();
@@ -22,24 +20,7 @@ bot.on('message', async (msg) => {
         try {
             const response = await axios.get(`${igDownloadUrl}/api/video?url=${instagramUrl[0]}`);
             const videoUrl = response.data.data.videoUrl;
-            await bot.sendMessage(chatId, 'Received video URL: ' + videoUrl);
-
-            await bot.sendMessage(chatId, 'Downloading video...');
-            const res = await fetch(videoUrl);
-            const fileStream = fs.createWriteStream('temp.mp4');
-            await new Promise((resolve, reject) => {
-                res.body.pipe(fileStream);
-                res.body.on("error", (err) => {
-                    reject(err);
-                });
-                fileStream.on("finish", function () {
-                    resolve();
-                });
-            });
-            await bot.sendMessage(chatId, 'Sending video...');
-            await bot.sendVideo(chatId, 'temp.mp4');
-
-            fs.unlinkSync('temp.mp4');
+            await bot.sendMessage(chatId, 'Here is your video: ' + videoUrl);
         } catch (error) {
             console.error('An error occurred:', error);
             bot.sendMessage(chatId, 'An error occurred while processing your request.');
